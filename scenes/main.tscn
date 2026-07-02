@@ -1,5 +1,6 @@
 [gd_scene format=4 uid="uid://bdapw2nbsj2rm"]
 
+[ext_resource type="Script" uid="uid://y26cfmj1f3f" path="res://scripts/main.gd" id="1_0wfyh"]
 [ext_resource type="Texture2D" uid="uid://cvqsc87piexe3" path="res://assets/tiny_sword/Tiny Swords (Update 010)/Terrain/Ground/Tilemap_Flat.png" id="1_o5qli"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0wfyh"]
@@ -45,6 +46,7 @@ tile_size = Vector2i(64, 64)
 sources/0 = SubResource("TileSetAtlasSource_0wfyh")
 
 [node name="Main" type="Node2D" unique_id=398674967]
+script = ExtResource("1_0wfyh")
 
 [node name="Battlefiled" type="Node2D" parent="." unique_id=640338055]
 
