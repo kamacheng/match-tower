@@ -35,6 +35,18 @@ func _check_repeat(r: int,c: int ,type: int) -> bool:
 	return false
 
 
+func swap(from: Vector2i, to: Vector2i) -> bool:
+	var delta := (from - to).abs()
+	if delta.x + delta.y != 1:
+		return false # 不相邻，拒绝交换
+	
+	var temp = grid[from.y][from.x].type
+	grid[from.y][from.x].type = grid[to.y][to.x].type
+	grid[to.y][to.x].type = temp
+	
+	return true
+
+
 func debug_print() -> void:
 	for row in range(rows):
 		var map := []

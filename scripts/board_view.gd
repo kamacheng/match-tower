@@ -1,5 +1,7 @@
 extends Node2D
 
+signal swaped
+
 const TEXTURES := {
 	GameConfig.ItemType.SWORD: preload("res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Icons/Icon_05.png"),
 	GameConfig.ItemType.BOW: preload("res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Icons/Icon_02.png"),
@@ -7,11 +9,11 @@ const TEXTURES := {
 	GameConfig.ItemType.MEAT: preload("res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Icons/Icon_04.png")
 }
 
-const NO_SELLECTION: Vector2i = Vector2i(-1,-1)
-var selected: Vector2i = NO_SELLECTION
+const NO_SELECTION: Vector2i = Vector2i(-1,-1)
+var selected: Vector2i = NO_SELECTION
 
 var sprites: Array = []
-
+var board :BoardLogic
 
 
 func setup(p_board: BoardLogic):
@@ -25,6 +27,7 @@ func setup(p_board: BoardLogic):
 			add_child(s)
 			temp_array.append(s)
 		sprites.append(temp_array)
+	board = p_board
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -32,17 +35,49 @@ func _unhandled_input(event: InputEvent) -> void:
 		var cell := Vector2i((get_local_mouse_position()/GameConfig.CELL_SIZE).floor())
 		if cell.x < 0 or cell.x >= GameConfig.COL_COUNT or cell.y < 0 or cell.y >= GameConfig.ROW_COUNT:
 			return
-		selected = cell
-		_hifhtlight(sprites[cell.y][cell.x])
-	
-	if selected != NO_SELLECTION:
-		pass
+		
+		if selected == NO_SELECTION:
+			selected = cell
+			_highlight(sprites[cell.y][cell.x])
+		else: 
+			if selected == cell:
+				selected = NO_SELECTION
+				_unhighlight(sprites[cell.y][cell.x])
+			elif _is_adjacent(cell,selected):
+				board.swap(selected,cell)
+				swaped.emit()
+				animate_swap(selected,cell)
+				_unhighlight(sprites[selected.y][selected.x])
+				selected = NO_SELECTION
+			else:
+				_highlight(sprites[cell.y][cell.x])
+				_unhighlight(sprites[selected.y][selected.x])
+				selected = cell
 
 
-func _hifhtlight(sprite: Sprite2D):
+func _is_adjacent(new_selected: Vector2i, old_selected: Vector2i) -> bool:
+	if (abs(old_selected.x-new_selected.x) + abs(old_selected.y - new_selected.y)) ==1:
+		return true
+	return false
+
+func _highlight(sprite: Sprite2D):
 	sprite.modulate = Color(1, 0, 0.3)
 
 
-func _unhightlight(sprite: Sprite2D):
+func _unhighlight(sprite: Sprite2D):
 	sprite.modulate = Color.WHITE
+
+func animate_swap(from_vec2: Vector2i, to_vec2:Vector2i):
+	var sprite_from: Sprite2D = sprites[from_vec2.y][from_vec2.x]
+	var sprite_to: Sprite2D = sprites[to_vec2.y][to_vec2.x]
+	var pos_from := sprite_from.position
+	var pos_to := sprite_to.position
 	
+	var tween: Tween = create_tween()
+	tween.tween_property(sprite_from,"position",pos_to,0.15)
+	tween.tween_property(sprite_to,"position",pos_from,0.15)
+	tween.finished.connect(func():
+		sprites[from_vec2.y][from_vec2.x] = sprite_to
+		sprites[to_vec2.y][to_vec2.x] = sprite_from
+		)
+	pass
