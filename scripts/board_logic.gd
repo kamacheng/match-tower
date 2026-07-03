@@ -11,10 +11,10 @@ func _init(p_rows: int, p_cols: int) -> void:
 	
 	
 	for r in range(rows):
-		var temp_array: Array = []
+		var row_array: Array = []
 		for c in range(cols):
-			temp_array.append({"kind": "item","type": -1})
-		grid.append(temp_array)
+			row_array.append({"kind": "item","type": -1})
+		grid.append(row_array)
 	
 	for r in range(rows):
 		for c in range(cols):
@@ -44,25 +44,43 @@ func swap(from: Vector2i, to: Vector2i) -> bool:
 	var temp = grid[from.y][from.x].type
 	grid[from.y][from.x].type = grid[to.y][to.x].type
 	grid[to.y][to.x].type = temp
-	find_matches()
+	print(find_matches())
 	return true
 
 
-func find_matches():
+func find_matches() -> Array:
+	var matches: Array = []
+	
 	for c in range(cols):
-		var temp_array: Array = []
+		var row_array: Array = []
 		for r in range(rows):
-			if temp_array.is_empty():
-				temp_array.append(Vector2i(c,r))
+			if row_array.is_empty():
+				row_array.append(Vector2i(c,r))
 			elif grid[r][c].type == grid[r - 1][c].type:
-				temp_array.append(Vector2i(c,r))
+				row_array.append(Vector2i(c,r))
 			else:
-				if temp_array.size() >= 3:
-					print(temp_array)
-				temp_array.clear()
-				temp_array.append(Vector2i(c,r))
-		if temp_array.size() >= 3:
-			print(temp_array)
+				if row_array.size() >= 3:
+					matches.append(row_array)
+				row_array = []
+				row_array.append(Vector2i(c,r))
+		if row_array.size() >= 3: # 边界
+			matches.append(row_array)
+	
+	for r in range(rows):
+		var col_array: Array = []
+		for c in range(cols):
+			if col_array.is_empty():
+				col_array.append(Vector2i(c,r))
+			elif grid[r][c].type == grid[r][c-1].type:
+				col_array.append(Vector2i(c,r))
+			else:
+				if col_array.size() >= 3:
+					matches.append(col_array)
+				col_array = []
+				col_array.append(Vector2i(c,r))
+		if col_array.size() >= 3:
+			matches.append(col_array)
+	return matches
 
 
 func debug_print() -> void:
