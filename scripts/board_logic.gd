@@ -50,7 +50,6 @@ func swap(from: Vector2i, to: Vector2i) -> bool:
 
 
 func find_matches() -> Array:
-
 	var match_v: Array = []
 	var match_h: Array = []
 	
@@ -97,7 +96,8 @@ func find_matches() -> Array:
 			match_v.append(match_h[h_index])
 	return match_v
 
-func _has_overlap(group_a: Array, group_b: Array) -> bool:
+
+func _has_overlap(group_a: Array, group_b: Array) -> bool:	# 工具方法,测试两个组是否重叠
 	for index in range(group_a.size()):
 		if group_b.has(group_a[index]):
 			return true
@@ -110,3 +110,9 @@ func debug_print() -> void:
 		for col in range(cols):
 			map.append(grid[row][col].type)
 		print(map)
+
+
+func resolve_matches(form: Vector2i, to: Vector2i):
+	var matfched := find_matches()
+	
+	pass
