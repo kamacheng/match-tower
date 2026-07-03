@@ -46,7 +46,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif _is_adjacent(cell,selected):
 				board.swap(selected,cell)
 				swaped.emit()
-				animate_swap(selected,cell)
+				_animate_swap(selected,cell)
 				_unhighlight(sprites[selected.y][selected.x])
 				selected = NO_SELECTION
 			else:
@@ -67,7 +67,7 @@ func _highlight(sprite: Sprite2D):
 func _unhighlight(sprite: Sprite2D):
 	sprite.modulate = Color.WHITE
 
-func animate_swap(from_vec2: Vector2i, to_vec2:Vector2i):
+func _animate_swap(from_vec2: Vector2i, to_vec2:Vector2i):
 	var sprite_from: Sprite2D = sprites[from_vec2.y][from_vec2.x]
 	var sprite_to: Sprite2D = sprites[to_vec2.y][to_vec2.x]
 	var pos_from := sprite_from.position
