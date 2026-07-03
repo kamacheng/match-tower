@@ -48,6 +48,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				swaped.emit()
 				_animate_swap(selected,cell)
 				_unhighlight(sprites[selected.y][selected.x])
+				_unhighlight(sprites[cell.y][cell.x])
 				selected = NO_SELECTION
 			else:
 				_highlight(sprites[cell.y][cell.x])
@@ -59,6 +60,7 @@ func _is_adjacent(new_selected: Vector2i, old_selected: Vector2i) -> bool:
 	if (abs(old_selected.x-new_selected.x) + abs(old_selected.y - new_selected.y)) ==1:
 		return true
 	return false
+
 
 func _highlight(sprite: Sprite2D):
 	sprite.modulate = Color(1, 0, 0.3)
@@ -73,11 +75,9 @@ func _animate_swap(from_vec2: Vector2i, to_vec2:Vector2i):
 	var pos_from := sprite_from.position
 	var pos_to := sprite_to.position
 	
+	sprites[from_vec2.y][from_vec2.x] = sprite_to
+	sprites[to_vec2.y][to_vec2.x] = sprite_from
+	
 	var tween: Tween = create_tween()
 	tween.tween_property(sprite_from,"position",pos_to,0.15)
 	tween.tween_property(sprite_to,"position",pos_from,0.15)
-	tween.finished.connect(func():
-		sprites[from_vec2.y][from_vec2.x] = sprite_to
-		sprites[to_vec2.y][to_vec2.x] = sprite_from
-		)
-	pass

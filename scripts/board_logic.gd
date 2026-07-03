@@ -45,11 +45,14 @@ func swap(from: Vector2i, to: Vector2i) -> bool:
 	grid[from.y][from.x].type = grid[to.y][to.x].type
 	grid[to.y][to.x].type = temp
 	print(find_matches())
+
 	return true
 
 
 func find_matches() -> Array:
-	var matches: Array = []
+
+	var match_v: Array = []
+	var match_h: Array = []
 	
 	for c in range(cols):
 		var row_array: Array = []
@@ -60,11 +63,11 @@ func find_matches() -> Array:
 				row_array.append(Vector2i(c,r))
 			else:
 				if row_array.size() >= 3:
-					matches.append(row_array)
+					match_v.append(row_array)
 				row_array = []
 				row_array.append(Vector2i(c,r))
 		if row_array.size() >= 3: # 边界
-			matches.append(row_array)
+			match_v.append(row_array)
 	
 	for r in range(rows):
 		var col_array: Array = []
@@ -75,12 +78,30 @@ func find_matches() -> Array:
 				col_array.append(Vector2i(c,r))
 			else:
 				if col_array.size() >= 3:
-					matches.append(col_array)
+					match_h.append(col_array)
 				col_array = []
 				col_array.append(Vector2i(c,r))
 		if col_array.size() >= 3:
-			matches.append(col_array)
-	return matches
+			match_h.append(col_array)
+	
+	for h_index in range(match_h.size()): # 外层：横
+		var is_merged: bool = false
+		for v_index in range(match_v.size()):
+			if _has_overlap(match_h[h_index],match_v[v_index]): 
+				for i in range(match_h[h_index].size()): # 合并重复项
+					if !match_v[v_index].has(match_h[h_index][i]):
+						match_v[v_index].append(match_h[h_index][i])
+				is_merged = true
+				break # 没有处理一横连两竖
+		if !is_merged:
+			match_v.append(match_h[h_index])
+	return match_v
+
+func _has_overlap(group_a: Array, group_b: Array) -> bool:
+	for index in range(group_a.size()):
+		if group_b.has(group_a[index]):
+			return true
+	return false
 
 
 func debug_print() -> void:
