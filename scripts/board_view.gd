@@ -14,6 +14,7 @@ var selected: Vector2i = NO_SELECTION
 
 var sprites: Array = []
 var board :BoardLogic
+var debug_type_labels: Array = []
 
 
 func setup(p_board: BoardLogic):
@@ -29,6 +30,7 @@ func setup(p_board: BoardLogic):
 		sprites.append(temp_array)
 	board = p_board
 	_add_debug_coords()
+	_add_debug_types()
 
 
 # 调试用：在每个格子左上角显示 (x,y) 坐标，方便对照打印信息
@@ -44,6 +46,40 @@ func _add_debug_coords() -> void:
 			label.add_theme_constant_override("outline_size", 4)
 			label.z_index = 10
 			add_child(label)
+
+
+# 调试用：每个格子右上角实时显示 type（士兵显示 S+type，随数据自动刷新）
+func _add_debug_types() -> void:
+	for r in range(board.rows):
+		var temp_array := []
+		for c in range(board.cols):
+			var label := Label.new()
+			label.position = Vector2((c + 1) * GameConfig.CELL_SIZE - 26, r * GameConfig.CELL_SIZE)
+			label.add_theme_font_size_override("font_size", 12)
+			label.add_theme_color_override("font_outline_color", Color.BLACK)
+			label.add_theme_constant_override("outline_size", 5)
+			label.z_index = 10
+			add_child(label)
+			temp_array.append(label)
+		debug_type_labels.append(temp_array)
+
+
+func _process(_delta: float) -> void:
+	if board == null or debug_type_labels.is_empty():
+		return
+	for r in range(board.rows):
+		for c in range(board.cols):
+			var d: Dictionary = board.grid[r][c]
+			var label: Label = debug_type_labels[r][c]
+			if d.kind == "soldier":
+				label.text = "S%d lv%d" % [d.type, d.get("level", 0)]
+				label.add_theme_color_override("font_color", Color.YELLOW)
+			elif d.type == -1:
+				label.text = "-1"
+				label.add_theme_color_override("font_color", Color.GRAY)
+			else:
+				label.text = str(d.type)
+				label.add_theme_color_override("font_color", Color.WHITE)
 
 
 func _unhandled_input(event: InputEvent) -> void:

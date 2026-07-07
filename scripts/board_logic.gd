@@ -41,9 +41,9 @@ func swap(from: Vector2i, to: Vector2i) -> bool:
 	if delta.x + delta.y != 1:
 		return false # 不相邻，拒绝交换
 	
-	var temp = grid[from.y][from.x].type
-	grid[from.y][from.x].type = grid[to.y][to.x].type
-	grid[to.y][to.x].type = temp
+	var temp = grid[from.y][from.x]
+	grid[from.y][from.x] = grid[to.y][to.x]
+	grid[to.y][to.x] = temp
 	#print("Swap: ", find_matches())
 	resolve_matches(from,to)
 	return true
@@ -56,30 +56,41 @@ func find_matches() -> Array:
 	for c in range(cols):
 		var row_array: Array = []
 		for r in range(rows):
-			if row_array.is_empty():
-				row_array.append(Vector2i(c,r))
-			elif grid[r][c].type == grid[r - 1][c].type:
-				row_array.append(Vector2i(c,r))
-			else:
-				if row_array.size() >= 3:
+			if grid[r][c].kind == "item" and grid[r][c].type != -1:
+				if row_array.is_empty():
+					row_array.append(Vector2i(c,r))
+				elif grid[r][c].type == grid[r - 1][c].type:
+					row_array.append(Vector2i(c,r))
+				else:
+					if row_array.size() >= 3:
+						match_v.append(row_array)
+					row_array = []
+					row_array.append(Vector2i(c,r))
+			else :
+				if row_array.size() >= 3: # 边界
 					match_v.append(row_array)
 				row_array = []
-				row_array.append(Vector2i(c,r))
 		if row_array.size() >= 3: # 边界
 			match_v.append(row_array)
+			
 	
 	for r in range(rows):
 		var col_array: Array = []
 		for c in range(cols):
-			if col_array.is_empty():
-				col_array.append(Vector2i(c,r))
-			elif grid[r][c].type == grid[r][c-1].type:
-				col_array.append(Vector2i(c,r))
+			if grid[r][c].kind == "item" and grid[r][c].type != -1:
+				if col_array.is_empty():
+					col_array.append(Vector2i(c,r))
+				elif grid[r][c].type == grid[r][c-1].type:
+					col_array.append(Vector2i(c,r))
+				else:
+					if col_array.size() >= 3:
+						match_h.append(col_array)
+					col_array = []
+					col_array.append(Vector2i(c,r))
 			else:
-				if col_array.size() >= 3:
+				if col_array.size() >= 3: # 边界
 					match_h.append(col_array)
 				col_array = []
-				col_array.append(Vector2i(c,r))
 		if col_array.size() >= 3:
 			match_h.append(col_array)
 	
@@ -112,8 +123,7 @@ func debug_print() -> void:
 				map.append("S" + str(grid[row][col].type))
 			else:
 				map.append(grid[row][col].type)
-			
-		print(map)
+		#print(map)
 
 
 func resolve_matches(from: Vector2i, to: Vector2i):
