@@ -27,7 +27,8 @@ func _init(p_rows: int, p_cols: int) -> void:
 			while _check_repeat(r,c,type):
 				type = randi_range(0,GameConfig.ItemType.size() - 1)
 			grid[r][c].type = type
-
+	
+	apply_gravity()
 
 func _check_repeat(r: int,c: int ,type: int) -> bool:
 	if r >= 2 : # 确保脚标不为负
@@ -145,5 +146,23 @@ func resolve_matches(from: Vector2i, to: Vector2i) -> Array:
 			grid[spawn_cell.y][spawn_cell.x].level = 1
 			
 			events.append({"event": "spawn", "cell": spawn_cell,"type": group_type})
-
 	return events
+
+
+func apply_gravity() -> Array:
+	
+	
+	
+	
+	return grid
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
