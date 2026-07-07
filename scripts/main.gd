@@ -14,9 +14,6 @@ func _ready() -> void:
 	board_view.setup(board)
 	board.match_resolved.connect(_on_match_resolved)
 	
-	board.debug_print()
-
-
 func _on_board_view_swaped() -> void:
 	step_count -= 1
 	step_label.text = str(step_count)
@@ -26,5 +23,6 @@ func _on_match_resolved(events: Array):
 		if event.event == "spawn":
 			var unit: Node2D = SOLDIER_SCENE.instantiate()
 			unit.position = board_view.cell_position(event.cell)
-			
 			units.add_child(unit)
+			unit.setup(event.type)
+			board_view.set_cell_node(event.cell,unit)

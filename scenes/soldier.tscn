@@ -1,61 +1,12 @@
 [gd_scene format=3 uid="uid://dpicg18lt5tde"]
 
-[ext_resource type="Texture2D" uid="uid://di7dk0afodod3" path="res://assets/tiny_sword/Tiny Swords (Update 010)/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png" id="1_3ekc7"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_b8o4s"]
-atlas = ExtResource("1_3ekc7")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vwkda"]
-atlas = ExtResource("1_3ekc7")
-region = Rect2(192, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_h6128"]
-atlas = ExtResource("1_3ekc7")
-region = Rect2(384, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mifpt"]
-atlas = ExtResource("1_3ekc7")
-region = Rect2(576, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_i7f5o"]
-atlas = ExtResource("1_3ekc7")
-region = Rect2(768, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2em86"]
-atlas = ExtResource("1_3ekc7")
-region = Rect2(960, 0, 192, 192)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_wb55i"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_b8o4s")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vwkda")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_h6128")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_mifpt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_i7f5o")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2em86")
-}],
-"loop": 1,
-"name": &"idle",
-"speed": 8.0
-}]
+[ext_resource type="SpriteFrames" uid="uid://jfyhxcspi32m" path="res://resources/warrior_frames.tres" id="1_3ekc7"]
+[ext_resource type="Script" uid="uid://k5cfbdf2u5xe" path="res://scripts/soldier.gd" id="1_q2rr1"]
 
 [node name="Slidier" type="Node2D" unique_id=649285900]
+script = ExtResource("1_q2rr1")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1414066440]
-sprite_frames = SubResource("SpriteFrames_wb55i")
+sprite_frames = ExtResource("1_3ekc7")
 animation = &"idle"
 autoplay = "idle"
-frame_progress = 0.5078919

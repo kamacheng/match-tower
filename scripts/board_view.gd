@@ -97,9 +97,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				selected = NO_SELECTION
 				_unhighlight(sprites[cell.y][cell.x])
 			elif _is_adjacent(cell,selected):
+				_animate_swap(selected,cell)
 				board.swap(selected,cell)
 				swaped.emit()
-				_animate_swap(selected,cell)
 				_unhighlight(sprites[selected.y][selected.x])
 				_unhighlight(sprites[cell.y][cell.x])
 				selected = NO_SELECTION
@@ -120,18 +120,18 @@ func _is_adjacent(new_selected: Vector2i, old_selected: Vector2i) -> bool:
 	return false
 
 
-func _highlight(sprite: Sprite2D):
+func _highlight(sprite: Node2D):
 	if sprite != null:
 		sprite.modulate = Color(1, 0, 0.3)
 
 
-func _unhighlight(sprite: Sprite2D):
+func _unhighlight(sprite: Node2D):
 	if sprite != null:
 		sprite.modulate = Color.WHITE
 
 func _animate_swap(from_vec2: Vector2i, to_vec2:Vector2i):
-	var sprite_from: Sprite2D = sprites[from_vec2.y][from_vec2.x]
-	var sprite_to: Sprite2D = sprites[to_vec2.y][to_vec2.x]
+	var sprite_from: Node2D = sprites[from_vec2.y][from_vec2.x]
+	var sprite_to: Node2D = sprites[to_vec2.y][to_vec2.x]
 	
 	sprites[from_vec2.y][from_vec2.x] = sprite_to
 	sprites[to_vec2.y][to_vec2.x] = sprite_from
@@ -152,3 +152,7 @@ func _on_match_resolved(events: Array):
 			for cell in event.cells:
 				sprites[cell.y][cell.x].queue_free()
 				sprites[cell.y][cell.x] = null
+
+
+func set_cell_node(cell: Vector2i, node: Node2D) -> void:
+	sprites[cell.y][cell.x] = node
