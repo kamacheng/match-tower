@@ -1,9 +1,14 @@
 class_name BoardLogic
 
+signal match_resolved(events: Array)
+
+
 var rows: int
 var cols: int
 
 var grid: Array = []
+
+
 
 func _init(p_rows: int, p_cols: int) -> void:
 	rows = p_rows
@@ -45,7 +50,8 @@ func swap(from: Vector2i, to: Vector2i) -> bool:
 	grid[from.y][from.x] = grid[to.y][to.x]
 	grid[to.y][to.x] = temp
 	#print("Swap: ", find_matches())
-	resolve_matches(from,to)
+	var events := resolve_matches(from,to)
+	match_resolved.emit(events)
 	return true
 
 
@@ -126,18 +132,24 @@ func debug_print() -> void:
 		#print(map)
 
 
-func resolve_matches(from: Vector2i, to: Vector2i):
+func resolve_matches(from: Vector2i, to: Vector2i) -> Array:
+	var events: Array = []
+	
 	var matched := find_matches()
 	for group in matched:
 		var first: Vector2i = group[0]
-		print("Resolve_matched: group: ", group)
-		print("Resolve_matched: first: ", group[0])
+		#print("Resolve_matched: group: ", group)
+		#print("Resolve_matched: first: ", group[0])
 		var group_type: int = grid[first.y][first.x].type
-		print("Resolve_matched: Item_type: " , group_type) # debug_print
+		#print("Resolve_matched: Item_type: " , group_type) # debug_print
+		
 		
 		var spawn_cell: Vector2i
 		for cell in group:
 			grid[cell.y][cell.x].type = -1
+		
+		events.append({"event": "clear", "cells": group})
+		
 		if group_type == GameConfig.ItemType.SWORD or group_type == GameConfig.ItemType.BOW:
 			if group.has(to):
 				spawn_cell = to
@@ -146,6 +158,8 @@ func resolve_matches(from: Vector2i, to: Vector2i):
 			grid[spawn_cell.y][spawn_cell.x].kind = "soldier"
 			grid[spawn_cell.y][spawn_cell.x].type = group_type
 			grid[spawn_cell.y][spawn_cell.x].level = 1
-				
-				
-	debug_print()
+			
+			events.append({"event": "spawn", "cell": spawn_cell,"type": group_type})
+		
+	#debug_print()
+	return events

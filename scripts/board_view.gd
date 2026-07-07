@@ -23,12 +23,13 @@ func setup(p_board: BoardLogic):
 		for c in range(p_board.cols):
 			var s := Sprite2D.new()
 			s.texture = TEXTURES[p_board.grid[r][c].type]
-			s.position = Vector2i(c,r) * GameConfig.CELL_SIZE + Vector2i(GameConfig.CELL_SIZE,GameConfig.CELL_SIZE) / 2
+			s.position = _cell_position(Vector2i(c,r))
 			s.scale = Vector2(GameConfig.CELL_SIZE,GameConfig.CELL_SIZE) /s.texture.get_size()
 			add_child(s)
 			temp_array.append(s)
 		sprites.append(temp_array)
 	board = p_board
+	p_board.match_resolved.connect(_on_match_resolved)
 	_add_debug_coords()
 	_add_debug_types()
 
@@ -106,6 +107,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				_highlight(sprites[cell.y][cell.x])
 				_unhighlight(sprites[selected.y][selected.x])
 				selected = cell
+ 
+
+func _cell_position(cell: Vector2i) -> Vector2:
+	return cell * GameConfig.CELL_SIZE + Vector2i(GameConfig.CELL_SIZE,GameConfig.CELL_SIZE) / 2
+
 
 
 func _is_adjacent(new_selected: Vector2i, old_selected: Vector2i) -> bool:
@@ -115,21 +121,34 @@ func _is_adjacent(new_selected: Vector2i, old_selected: Vector2i) -> bool:
 
 
 func _highlight(sprite: Sprite2D):
-	sprite.modulate = Color(1, 0, 0.3)
+	if sprite != null:
+		sprite.modulate = Color(1, 0, 0.3)
 
 
 func _unhighlight(sprite: Sprite2D):
-	sprite.modulate = Color.WHITE
+	if sprite != null:
+		sprite.modulate = Color.WHITE
 
 func _animate_swap(from_vec2: Vector2i, to_vec2:Vector2i):
 	var sprite_from: Sprite2D = sprites[from_vec2.y][from_vec2.x]
 	var sprite_to: Sprite2D = sprites[to_vec2.y][to_vec2.x]
-	var pos_from := sprite_from.position
-	var pos_to := sprite_to.position
 	
 	sprites[from_vec2.y][from_vec2.x] = sprite_to
 	sprites[to_vec2.y][to_vec2.x] = sprite_from
 	
+	if sprite_from == null and sprite_to ==null:
+		return
+	
 	var tween: Tween = create_tween()
-	tween.tween_property(sprite_from,"position",pos_to,0.15)
-	tween.tween_property(sprite_to,"position",pos_from,0.15)
+	if sprite_from != null:
+		tween.tween_property(sprite_from,"position",_cell_position(to_vec2),0.15)
+	if sprite_to != null:
+		tween.tween_property(sprite_to,"position",_cell_position(from_vec2),0.15)
+
+
+func _on_match_resolved(events: Array):
+	for event in events:
+		if event.event == "clear":
+			for cell in event.cells:
+				sprites[cell.y][cell.x].queue_free()
+				sprites[cell.y][cell.x] = null
