@@ -23,7 +23,7 @@ func setup(p_board: BoardLogic):
 		for c in range(p_board.cols):
 			var s := Sprite2D.new()
 			s.texture = TEXTURES[p_board.grid[r][c].type]
-			s.position = _cell_position(Vector2i(c,r))
+			s.position = cell_position(Vector2i(c,r))
 			s.scale = Vector2(GameConfig.CELL_SIZE,GameConfig.CELL_SIZE) /s.texture.get_size()
 			add_child(s)
 			temp_array.append(s)
@@ -109,7 +109,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				selected = cell
  
 
-func _cell_position(cell: Vector2i) -> Vector2:
+func cell_position(cell: Vector2i) -> Vector2:
 	return cell * GameConfig.CELL_SIZE + Vector2i(GameConfig.CELL_SIZE,GameConfig.CELL_SIZE) / 2
 
 
@@ -141,9 +141,9 @@ func _animate_swap(from_vec2: Vector2i, to_vec2:Vector2i):
 	
 	var tween: Tween = create_tween()
 	if sprite_from != null:
-		tween.tween_property(sprite_from,"position",_cell_position(to_vec2),0.15)
+		tween.tween_property(sprite_from,"position",cell_position(to_vec2),0.15)
 	if sprite_to != null:
-		tween.tween_property(sprite_to,"position",_cell_position(from_vec2),0.15)
+		tween.tween_property(sprite_to,"position",cell_position(from_vec2),0.15)
 
 
 func _on_match_resolved(events: Array):
