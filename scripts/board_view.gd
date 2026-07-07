@@ -28,6 +28,22 @@ func setup(p_board: BoardLogic):
 			temp_array.append(s)
 		sprites.append(temp_array)
 	board = p_board
+	_add_debug_coords()
+
+
+# 调试用：在每个格子左上角显示 (x,y) 坐标，方便对照打印信息
+func _add_debug_coords() -> void:
+	for r in range(board.rows):
+		for c in range(board.cols):
+			var label := Label.new()
+			label.text = "%d,%d" % [c, r]
+			label.position = Vector2(c, r) * GameConfig.CELL_SIZE
+			label.add_theme_font_size_override("font_size", 10)
+			label.add_theme_color_override("font_color", Color.WHITE)
+			label.add_theme_color_override("font_outline_color", Color.BLACK)
+			label.add_theme_constant_override("outline_size", 4)
+			label.z_index = 10
+			add_child(label)
 
 
 func _unhandled_input(event: InputEvent) -> void:

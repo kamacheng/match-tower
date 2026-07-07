@@ -44,8 +44,8 @@ func swap(from: Vector2i, to: Vector2i) -> bool:
 	var temp = grid[from.y][from.x].type
 	grid[from.y][from.x].type = grid[to.y][to.x].type
 	grid[to.y][to.x].type = temp
-	print(find_matches())
-
+	#print("Swap: ", find_matches())
+	resolve_matches(from,to)
 	return true
 
 
@@ -108,11 +108,34 @@ func debug_print() -> void:
 	for row in range(rows):
 		var map := []
 		for col in range(cols):
-			map.append(grid[row][col].type)
+			if grid[row][col].kind == "soldier":
+				map.append("S" + str(grid[row][col].type))
+			else:
+				map.append(grid[row][col].type)
+			
 		print(map)
 
 
-func resolve_matches(form: Vector2i, to: Vector2i):
-	var matfched := find_matches()
-	
-	pass
+func resolve_matches(from: Vector2i, to: Vector2i):
+	var matched := find_matches()
+	for group in matched:
+		var first: Vector2i = group[0]
+		print("Resolve_matched: group: ", group)
+		print("Resolve_matched: first: ", group[0])
+		var group_type: int = grid[first.y][first.x].type
+		print("Resolve_matched: Item_type: " , group_type) # debug_print
+		
+		var spawn_cell: Vector2i
+		for cell in group:
+			grid[cell.y][cell.x].type = -1
+		if group_type == GameConfig.ItemType.SWORD or group_type == GameConfig.ItemType.BOW:
+			if group.has(to):
+				spawn_cell = to
+			else:
+				spawn_cell = from
+			grid[spawn_cell.y][spawn_cell.x].kind = "soldier"
+			grid[spawn_cell.y][spawn_cell.x].type = group_type
+			grid[spawn_cell.y][spawn_cell.x].level = 1
+				
+				
+	debug_print()
