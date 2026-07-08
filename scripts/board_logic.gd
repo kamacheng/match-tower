@@ -154,9 +154,6 @@ func apply_gravity() -> Array:
 	for col in range(cols):
 		var r: Array = []
 		var r_index: int
-		
-		
-		
 		for row in range(rows-1, -1, -1):
 			r.append(grid[row][col].type)
 			
