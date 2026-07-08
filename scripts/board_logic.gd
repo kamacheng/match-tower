@@ -150,9 +150,19 @@ func resolve_matches(from: Vector2i, to: Vector2i) -> Array:
 
 
 func apply_gravity() -> Array:
-	
-	
-	
+	var events := []
+	for col in range(cols):
+		var r: Array = []
+		var r_index: int
+		
+		
+		
+		for row in range(rows-1, -1, -1):
+			r.append(grid[row][col].type)
+			
+			
+			
+			
 	
 	return grid
 	
